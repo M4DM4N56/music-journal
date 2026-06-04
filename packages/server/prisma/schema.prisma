@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  googleId    String   @unique @map("google_id")
+  email       String   @unique
+  displayName String   @map("display_name")
+  avatarUrl   String?  @map("avatar_url")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  ratings      Rating[]
+  diaryEntries DiaryEntry[]
+
+  @@map("users")
+}
+
+model Album {
+  id          String   @id @default(uuid())
+  itunesId    Int      @unique @map("itunes_id")
+  title       String
+  artistName  String   @map("artist_name")
+  artistId    Int      @map("artist_id")
+  coverArtUrl String?  @map("cover_art_url")
+  releaseYear Int?     @map("release_year")
+  cachedAt    DateTime @default(now()) @map("cached_at")
+
+  ratings      Rating[]
+  diaryEntries DiaryEntry[]
+
+  @@index([artistId])
+  @@map("albums")
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  score     Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
+
+  userId  String @map("user_id")
+  user    User   @relation(fields: [userId], references: [id])
+  albumId String @map("album_id")
+  album   Album  @relation(fields: [albumId], references: [id])
+
+  @@unique([userId, albumId])
+  @@map("ratings")
+}
+
+model DiaryEntry {
+  id            String    @id @default(uuid())
+  listenedAt    DateTime? @map("listened_at") @db.Date
+  isFirstListen Boolean   @default(false) @map("is_first_listen")
+  notes         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  userId  String @map("user_id")
+  user    User   @relation(fields: [userId], references: [id])
+  albumId String @map("album_id")
+  album   Album  @relation(fields: [albumId], references: [id])
+
+  @@index([userId])
+  @@index([albumId])
+  @@map("diary_entries")
+}
