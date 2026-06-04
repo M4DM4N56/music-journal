@@ -12,6 +12,7 @@ import albumsRouter from './routes/albums'
 import ratingsRouter from './routes/ratings'
 import diaryRouter from './routes/diary'
 import usersRouter from './routes/users'
+import statusRouter from './routes/status'
 
 if (!process.env.SESSION_SECRET) {
   console.error('ERROR: SESSION_SECRET environment variable is not set. Refusing to start.')
@@ -58,6 +59,7 @@ app.use(albumsRouter)
 app.use(ratingsRouter)
 app.use(diaryRouter)
 app.use(usersRouter)
+app.use(statusRouter)
 
 app.get('/health', async (_req, res) => {
   try {

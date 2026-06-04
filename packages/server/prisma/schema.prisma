@@ -17,6 +17,7 @@ model User {
 
   ratings      Rating[]
   diaryEntries DiaryEntry[]
+  albumStatuses AlbumStatus[]
 
   @@map("users")
 }
@@ -68,4 +69,19 @@ model DiaryEntry {
   @@index([userId])
   @@index([albumId])
   @@map("diary_entries")
+}
+
+model AlbumStatus {
+  id        String   @id @default(uuid())
+  listened  Boolean  @default(false)
+  nextUp    Boolean  @default(false) @map("next_up")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  userId   String @map("user_id")
+  user     User   @relation(fields: [userId], references: [id])
+  itunesId Int    @map("itunes_id")
+
+  @@unique([userId, itunesId])
+  @@index([userId])
+  @@map("album_status")
 }

@@ -21,7 +21,10 @@ router.get('/api/diary', requireAuth, async (req: Request, res: Response) => {
   const [entries, total] = await Promise.all([
     prisma.diaryEntry.findMany({
       where: { userId: req.user!.id },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { listenedAt: { sort: 'desc', nulls: 'last' } },
+        { createdAt: 'desc' },
+      ],
       skip,
       take: limit,
       include: {
@@ -45,20 +48,27 @@ router.post('/api/diary', requireAuth, validate(diaryEntrySchema), async (req: R
     return
   }
 
-  const entry = await prisma.diaryEntry.create({
-    data: {
-      userId: req.user!.id,
-      albumId: album.id,
-      listenedAt: listenedAt ? new Date(listenedAt) : null,
-      isFirstListen,
-      notes: notes ?? null,
-    },
-    include: {
-      album: {
-        select: { title: true, coverArtUrl: true, artistName: true },
+  const [entry] = await Promise.all([
+    prisma.diaryEntry.create({
+      data: {
+        userId: req.user!.id,
+        albumId: album.id,
+        listenedAt: listenedAt ? new Date(listenedAt) : null,
+        isFirstListen,
+        notes: notes ?? null,
       },
-    },
-  })
+      include: {
+        album: {
+          select: { title: true, coverArtUrl: true, artistName: true },
+        },
+      },
+    }),
+    prisma.albumStatus.upsert({
+      where: { userId_itunesId: { userId: req.user!.id, itunesId } },
+      update: { listened: true, nextUp: false, updatedAt: new Date() },
+      create: { userId: req.user!.id, itunesId, listened: true, nextUp: false },
+    }),
+  ])
 
   res.json({ entry })
 })

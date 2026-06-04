@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { api } from '../lib/api'
-import AlbumCard from '../components/AlbumCard'
+import AlbumGrid from '../components/AlbumGrid'
 import type { Album } from '../types/album'
 
 export default function ArtistPage() {
@@ -37,11 +37,7 @@ export default function ArtistPage() {
   return (
     <main style={{ padding: '16px', maxWidth: '800px' }}>
       <h1>{artistName}</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '8px' }}>
-        {albums.map((album) => (
-          <AlbumCard key={album.itunesId} album={album} />
-        ))}
-      </div>
+      <AlbumGrid albums={albums} />
     </main>
   )
 }

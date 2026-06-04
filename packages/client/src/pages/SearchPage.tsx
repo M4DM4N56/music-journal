@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { api } from '../lib/api'
-import AlbumCard from '../components/AlbumCard'
+import AlbumGrid from '../components/AlbumGrid'
 import type { Album } from '../types/album'
 
 export default function SearchPage() {
@@ -49,11 +49,9 @@ export default function SearchPage() {
       />
       <div style={{ marginTop: '16px' }}>
         {isLoading && <p>Searching...</p>}
-        {!isLoading && hasSearched && results.length === 0 && <p>No results found</p>}
-        {!isLoading &&
-          results.map((album) => (
-            <AlbumCard key={album.itunesId} album={album} />
-          ))}
+        {!isLoading && hasSearched && (
+          <AlbumGrid albums={results} emptyMessage="No results found." />
+        )}
       </div>
     </main>
   )
