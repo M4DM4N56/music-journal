@@ -41,12 +41,19 @@ router.post('/api/ratings', requireAuth, validate(ratingSchema), async (req: Req
     return
   }
 
-  const rating = await prisma.rating.upsert({
-    where: { userId_albumId: { userId: req.user!.id, albumId: album.id } },
-    create: { userId: req.user!.id, albumId: album.id, score },
-    update: { score, updatedAt: new Date() },
-    select: { score: true, updatedAt: true },
-  })
+  const [rating] = await Promise.all([
+    prisma.rating.upsert({
+      where: { userId_albumId: { userId: req.user!.id, albumId: album.id } },
+      create: { userId: req.user!.id, albumId: album.id, score },
+      update: { score, updatedAt: new Date() },
+      select: { score: true, updatedAt: true },
+    }),
+    prisma.albumStatus.upsert({
+      where: { userId_itunesId: { userId: req.user!.id, itunesId } },
+      update: { listened: true, nextUp: false, updatedAt: new Date() },
+      create: { userId: req.user!.id, itunesId, listened: true, nextUp: false },
+    }),
+  ])
 
   res.json({ rating })
 })

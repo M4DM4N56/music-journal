@@ -13,6 +13,7 @@ model User {
   email       String   @unique
   displayName String   @map("display_name")
   avatarUrl   String?  @map("avatar_url")
+  username    String?  @unique
   createdAt   DateTime @default(now()) @map("created_at")
 
   ratings      Rating[]

@@ -37,7 +37,7 @@ export default function SearchPage() {
   }, [query])
 
   return (
-    <main style={{ padding: '16px', maxWidth: '600px' }}>
+    <main style={{ padding: '16px 24px', maxWidth: '1400px', margin: '0 auto' }}>
       <h1>Search</h1>
       <input
         type='text'

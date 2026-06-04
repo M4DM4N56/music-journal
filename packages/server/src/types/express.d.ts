@@ -8,6 +8,7 @@ declare global {
       email: string
       displayName: string
       avatarUrl: string | null
+      username: string | null
       createdAt: Date
     }
   }

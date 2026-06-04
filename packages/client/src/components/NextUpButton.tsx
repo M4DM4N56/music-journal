@@ -1,30 +1,10 @@
-import { useState } from 'react'
-import { api } from '../lib/api'
-
 interface NextUpButtonProps {
-  itunesId: number
-  initialNextUp: boolean
+  nextUp: boolean
+  saving: boolean
+  onToggle: () => void
 }
 
-export default function NextUpButton({ itunesId, initialNextUp }: NextUpButtonProps) {
-  const [nextUp, setNextUp] = useState(initialNextUp)
-  const [saving, setSaving] = useState(false)
-
-  async function handleClick() {
-    if (saving) return
-    setSaving(true)
-    const next = !nextUp
-    try {
-      const res = await api.post('/api/status', { itunesId, nextUp: next })
-      if (!res.ok) throw new Error()
-      setNextUp(next)
-    } catch {
-      // fail silently
-    } finally {
-      setSaving(false)
-    }
-  }
-
+export default function NextUpButton({ nextUp, saving, onToggle }: NextUpButtonProps) {
   const activeStyle: React.CSSProperties = {
     backgroundColor: '#d97706',
     color: 'white',
@@ -38,7 +18,7 @@ export default function NextUpButton({ itunesId, initialNextUp }: NextUpButtonPr
 
   return (
     <button
-      onClick={handleClick}
+      onClick={onToggle}
       disabled={saving}
       style={{
         ...(nextUp ? activeStyle : inactiveStyle),

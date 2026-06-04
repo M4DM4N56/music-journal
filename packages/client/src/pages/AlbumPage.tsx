@@ -26,11 +26,13 @@ export default function AlbumPage() {
 
   const [album, setAlbum] = useState<Album | null>(null)
   const [rating, setRating] = useState<{ score: number; updatedAt: string } | null>(null)
-  const [albumStatus, setAlbumStatus] = useState<{ listened: boolean; nextUp: boolean }>({ listened: false, nextUp: false })
+  const [listened, setListened] = useState(false)
+  const [nextUp, setNextUp] = useState(false)
+  const [listenedSaving, setListenedSaving] = useState(false)
+  const [nextUpSaving, setNextUpSaving] = useState(false)
   const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([])
   const [pageStatus, setPageStatus] = useState<'loading' | 'ok' | 'notfound' | 'error'>('loading')
   const [modalOpen, setModalOpen] = useState(false)
-  const [listenedKey, setListenedKey] = useState(0)
 
   const refetchDiary = useCallback(() => {
     api.get('/api/diary')
@@ -60,7 +62,8 @@ export default function AlbumPage() {
         ])
         setAlbum(albumData)
         setRating(ratingData.rating ?? null)
-        setAlbumStatus(statusData.status ?? { listened: false, nextUp: false })
+        setListened(statusData.status?.listened ?? false)
+        setNextUp(statusData.status?.nextUp ?? false)
         setPageStatus('ok')
       })
       .catch(() => setPageStatus('error'))
@@ -70,6 +73,27 @@ export default function AlbumPage() {
     if (pageStatus === 'ok') refetchDiary()
   }, [pageStatus, refetchDiary])
 
+  async function handleListenedToggle() {
+    if (listenedSaving) return
+    setListenedSaving(true)
+    const newListened = !listened
+    const res = await api.post('/api/status', { itunesId, listened: newListened })
+    if (res.ok) {
+      setListened(newListened)
+      if (newListened) setNextUp(false)
+    }
+    setListenedSaving(false)
+  }
+
+  async function handleNextUpToggle() {
+    if (nextUpSaving) return
+    setNextUpSaving(true)
+    const newNextUp = !nextUp
+    const res = await api.post('/api/status', { itunesId, nextUp: newNextUp })
+    if (res.ok) setNextUp(newNextUp)
+    setNextUpSaving(false)
+  }
+
   if (isNaN(itunesId)) return <main style={{ padding: '16px' }}><p>Invalid album</p></main>
   if (pageStatus === 'loading') return <main style={{ padding: '16px' }}><p>Loading...</p></main>
   if (pageStatus === 'notfound') return <main style={{ padding: '16px' }}><p>Album not found</p></main>
@@ -77,19 +101,19 @@ export default function AlbumPage() {
   if (!album) return null
 
   return (
-    <main style={{ padding: '16px', maxWidth: '700px' }}>
+    <main style={{ padding: '16px 24px', maxWidth: '1400px', margin: '0 auto' }}>
       {/* Hero */}
       <div style={{ display: 'flex', gap: '24px', marginBottom: '24px', alignItems: 'flex-start' }}>
         {album.coverArtUrl ? (
           <img
             src={album.coverArtUrl}
             alt={album.title}
-            width={300}
-            height={300}
+            width={360}
+            height={360}
             style={{ objectFit: 'cover', borderRadius: '8px', flexShrink: 0 }}
           />
         ) : (
-          <div style={{ width: 300, height: 300, background: '#d1d5db', borderRadius: '8px', flexShrink: 0 }} />
+          <div style={{ width: 360, height: 360, background: '#d1d5db', borderRadius: '8px', flexShrink: 0 }} />
         )}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <h1 style={{ margin: 0 }}>{album.title}</h1>
@@ -104,8 +128,8 @@ export default function AlbumPage() {
 
       {/* Action row */}
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
-        <ListenedButton key={listenedKey} itunesId={itunesId} initialListened={albumStatus.listened} />
-        <NextUpButton itunesId={itunesId} initialNextUp={albumStatus.nextUp} />
+        <ListenedButton listened={listened} saving={listenedSaving} onToggle={handleListenedToggle} />
+        <NextUpButton nextUp={nextUp} saving={nextUpSaving} onToggle={handleNextUpToggle} />
         <button
           onClick={() => setModalOpen(true)}
           style={{ padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500 }}
@@ -149,7 +173,8 @@ export default function AlbumPage() {
           onSuccess={() => {
             setModalOpen(false)
             refetchDiary()
-            setListenedKey((k) => k + 1)
+            setListened(true)
+            setNextUp(false)
           }}
           onClose={() => setModalOpen(false)}
         />

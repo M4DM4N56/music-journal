@@ -12,8 +12,9 @@ export default function NavBar() {
       {isAuthenticated ? (
         <>
           <Link to='/search' style={{ textDecoration: 'none', color: 'inherit' }}>Search</Link>
-<Link
-            to={`/user/${encodeURIComponent(user!.displayName)}`}
+          <Link to='/users/search' style={{ textDecoration: 'none', color: 'inherit' }}>Find users</Link>
+          <Link
+            to={`/user/${user!.username ?? ''}`}
             style={{ marginLeft: 'auto', textDecoration: 'none', color: 'inherit' }}
           >
             {user!.displayName}

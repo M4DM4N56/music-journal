@@ -35,7 +35,7 @@ export default function ArtistPage() {
   if (status === 'error') return <main style={{ padding: '16px' }}><p>Something went wrong</p></main>
 
   return (
-    <main style={{ padding: '16px', maxWidth: '800px' }}>
+    <main style={{ padding: '16px 24px', maxWidth: '1400px', margin: '0 auto' }}>
       <h1>{artistName}</h1>
       <AlbumGrid albums={albums} />
     </main>

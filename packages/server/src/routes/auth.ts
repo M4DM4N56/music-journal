@@ -48,8 +48,8 @@ router.post('/auth/logout', (req: Request, res: Response) => {
 router.get('/auth/me', requireAuth, (req: Request, res: Response) => {
   console.log('[auth/me] session id:', req.sessionID)
   console.log('[auth/me] isAuthenticated:', req.isAuthenticated())
-  const { id, displayName, email, avatarUrl } = req.user!
-  res.json({ id, displayName, email, avatarUrl })
+  const { id, displayName, email, avatarUrl, username } = req.user!
+  res.json({ id, displayName, email, avatarUrl, username })
 })
 
 export default router

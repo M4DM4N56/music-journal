@@ -6,6 +6,7 @@ type AuthUser = {
   displayName: string
   email: string
   avatarUrl: string | null
+  username: string | null
 }
 
 type AuthContextValue = {
@@ -13,6 +14,7 @@ type AuthContextValue = {
   isLoading: boolean
   isAuthenticated: boolean
   logout: () => Promise<void>
+  setUser: (user: AuthUser | null) => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -36,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, isAuthenticated: !!user, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, isAuthenticated: !!user, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   )

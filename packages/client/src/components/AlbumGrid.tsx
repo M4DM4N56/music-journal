@@ -4,19 +4,20 @@ import type { Album } from '../types/album'
 interface AlbumGridProps {
   albums: Album[]
   emptyMessage?: string
+  scoresMap?: Record<number, number>
 }
 
-export default function AlbumGrid({ albums, emptyMessage = 'No albums yet.' }: AlbumGridProps) {
+export default function AlbumGrid({ albums, emptyMessage = 'No albums yet.', scoresMap }: AlbumGridProps) {
   if (albums.length === 0) {
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
         <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#6b7280' }}>{emptyMessage}</p>
       </div>
     )
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
       {albums.map((album) => (
         <Link
           key={album.itunesId}
@@ -40,6 +41,23 @@ export default function AlbumGrid({ albums, emptyMessage = 'No albums yet.' }: A
               />
             ) : (
               <div style={{ position: 'absolute', inset: 0, backgroundColor: '#d1d5db' }} />
+            )}
+            {scoresMap?.[album.itunesId] !== undefined && (
+              <div style={{
+                position: 'absolute',
+                bottom: 6,
+                left: 6,
+                background: 'rgba(0,0,0,0.72)',
+                color: 'white',
+                borderRadius: 4,
+                padding: '2px 7px',
+                fontSize: '0.72rem',
+                fontWeight: 'bold',
+                lineHeight: 1.4,
+                pointerEvents: 'none',
+              }}>
+                {scoresMap[album.itunesId]}
+              </div>
             )}
           </div>
           <div style={{ padding: '8px' }}>
