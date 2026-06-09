@@ -32,7 +32,12 @@ const PgStore = connectPgSimple(session)
 const pgPool = new pg.Pool({ connectionString: process.env.DATABASE_URL })
 
 app.set('trust proxy', 1)
-app.use(helmet())
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    contentSecurityPolicy: false,
+  })
+)
 app.use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }))
 app.use(express.json())
 
