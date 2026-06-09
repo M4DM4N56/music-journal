@@ -25,7 +25,7 @@ router.get(
         }
         console.log('[auth/callback] session ID:', req.sessionID)
         console.log('[auth/callback] session:', JSON.stringify(req.session))
-        console.log('[auth/callback] user:', (user as Express.User).id)
+        console.log('[auth/callback] user:', req.user?.id)
         console.log('[auth/callback] redirecting to:', process.env.CLIENT_ORIGIN)
         return res.redirect(process.env.CLIENT_ORIGIN ?? 'http://localhost:5173')
       })
