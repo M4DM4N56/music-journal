@@ -23,7 +23,10 @@ router.get(
           console.error('[auth/callback] req.logIn error:', loginErr)
           return res.status(500).json({ error: 'Login failed', detail: loginErr.message })
         }
-        console.log('[auth/callback] Login successful for user:', (user as Express.User).id)
+        console.log('[auth/callback] session ID:', req.sessionID)
+        console.log('[auth/callback] session:', JSON.stringify(req.session))
+        console.log('[auth/callback] user:', (user as Express.User).id)
+        console.log('[auth/callback] redirecting to:', process.env.CLIENT_ORIGIN)
         return res.redirect(process.env.CLIENT_ORIGIN ?? 'http://localhost:5173')
       })
     })(req, res, next)
@@ -46,8 +49,9 @@ router.post('/auth/logout', (req: Request, res: Response) => {
 })
 
 router.get('/auth/me', requireAuth, (req: Request, res: Response) => {
-  console.log('[auth/me] session id:', req.sessionID)
+  console.log('[auth/me] session ID:', req.sessionID)
   console.log('[auth/me] isAuthenticated:', req.isAuthenticated())
+  console.log('[auth/me] cookies:', req.headers.cookie)
   const { id, displayName, email, avatarUrl, username } = req.user!
   res.json({ id, displayName, email, avatarUrl, username })
 })
