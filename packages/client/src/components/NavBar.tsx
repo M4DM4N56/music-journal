@@ -22,7 +22,7 @@ export default function NavBar() {
           <button onClick={logout}>Logout</button>
         </>
       ) : (
-        <a href='/auth/google'>Sign in with Google</a>
+        <a href={`${import.meta.env.VITE_API_URL}/auth/google`}>Sign in with Google</a>
       )}
     </nav>
   )

@@ -21,7 +21,7 @@ export default function HomePage() {
         <>
           <h1>Music Logger</h1>
           <p>Track the albums you've listened to.</p>
-          <a href='/auth/google' style={{ display: 'inline-block', marginTop: '8px', padding: '10px 20px', background: '#333', color: '#fff', borderRadius: '4px', textDecoration: 'none' }}>
+          <a href={`${import.meta.env.VITE_API_URL}/auth/google`} style={{ display: 'inline-block', marginTop: '8px', padding: '10px 20px', background: '#333', color: '#fff', borderRadius: '4px', textDecoration: 'none' }}>
             Sign in with Google
           </a>
         </>
